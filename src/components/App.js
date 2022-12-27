@@ -1,96 +1,139 @@
-import { React, usestate, useEffect } from 'react'
-
 import OB from './OB'
 import '../styles.css'
 import ChakraUI from './ChakraUI'
-import { Route, Routes } from 'react-router-dom'
-import Selecting from './Select'
+import React, { useState, useEffect, useRef } from 'react'
+import { Container } from '@chakra-ui/react'
+import Containers from './ChakraUI'
+
 export default function App() {
-  // const [pair, setPair] = usestate('')
-  // // const [currencies, setCureencies] = usestate([])
-  // const client = new WebSocket('wss://ws-feed.pro.coinbase.com')
-  // const [currencies, setCurrencies] = usestate([])
+  const [currencies, setcurrencies] = useState([])
+  const [pair, setpair] = useState('')
+  const [price, setprice] = useState('0.00')
+  // const [pastData, setpastData] = useState({})
+  const [bestBidPrice, setBestBidPrice] = useState('')
+  const [bestBidQuantity, setBestBidQuantity] = useState('')
+  const [bestAskQuantity, setBestAskQuantity] = useState('')
+  const [bestAskPrice, setBestAskPrice] = useState('')
+  const ws = useRef(null)
 
-  // stilll need to do the pair what u wanna do is tdo the routes and use parameters to change the link!!
+  let first = useRef(false)
+  const url = 'https://api.pro.coinbase.com'
 
-  // useEffect(() => {
-  //   const getPais = () => {
-  //     const pairs = ['BTC-USD', 'ETH-USD', 'LTC-USD', 'BCH-USD']
+  useEffect(() => {
+    ws.current = new WebSocket('wss://ws-feed.pro.coinbase.com')
 
-  //     let filtered = pairs.filter((pair) => {
-  //       // if (pair.quote_currency === "USD") {
-  //       //   return pair;
-  //       // if (pair.quote_currency === "USD") {
-  //       //   return pair;
-  //       // }
-  //       if (pair.id === 'ETH-USD') {
-  //         return pair
-  //       }
-  //       if (pair.id === 'BCH-USD') {
-  //         return pair
-  //       }
-  //       if (pair.id === 'BTC-USD') {
-  //         return pair
-  //       }
-  //       if (pair.id === 'LTC-USD') {
-  //         return pair
-  //       }
-  //     })
-  //     filtered = filtered.sort((a, b) => {
-  //       if (a.base_currency < b.base_currency) {
-  //         return -1
-  //       }
-  //       if (a.base_currency > b.base_currency) {
-  //         return 1
-  //       }
-  //       return 0
-  //     })
-  //     console.log(filtered)
-  //     //setcuurrencies to set new list of currencies
-  //     setCurrencies(filtered)
-  //   }
-  //   getPais()
-  // }, [])
-  // useEffect(() => {
-  //   ChakraUI()
-  // }, [pair])
+    let pairs = []
 
-  // const handleSelect = (e) => {
-  //   console.log(e.target.value)
-  //   let unsubMsg = {
-  //     type: 'unsubscribe',
-  //     product_ids: [pair],
-  //     channels: ['ticker'],
-  //   }
-  //   let unsub = JSON.stringify(unsubMsg)
+    const apiCall = async () => {
+      await fetch(url + '/products')
+        .then((res) => res.json())
+        .then((data) => (pairs = data))
+      console.log('pairs', pairs)
 
-  //   client.current.send(unsub)
+      let filtered = pairs.filter((pair) => {
+        if (pair.id === 'BTC-USD') {
+          return pair
+        }
+        if (pair.id === 'ETH-USD') {
+          return pair
+        }
+        if (pair.id === 'BCH-USD') {
+          return pair
+        }
+        if (pair.id === 'LTC-USD') {
+          return pair
+        }
+      })
 
-  //   setPair(e.target.value)
-  // }
+      filtered = filtered.sort((a, b) => {
+        if (a.base_currency < b.base_currency) {
+          return -1
+        }
+        if (a.base_currency > b.base_currency) {
+          return 1
+        }
+        return 0
+      })
+
+      setcurrencies(filtered)
+      console.log(filtered)
+
+      first.current = true
+    }
+
+    apiCall()
+  }, [])
+
+  useEffect(() => {
+    if (!first.current) {
+      return
+    }
+
+    let msg = {
+      type: 'subscribe',
+      product_ids: [pair],
+      channels: ['ticker'],
+    }
+    let jsonMsg = JSON.stringify(msg)
+    ws.current.send(jsonMsg)
+
+    ws.current.onmessage = (e) => {
+      let data = JSON.parse(e.data)
+
+      if (data.type !== 'ticker') {
+        return
+      }
+
+      if (data.product_id === pair) {
+        setprice(data.price)
+        setBestBidPrice(data.best_bid)
+        setBestBidQuantity(data.best_bid_size)
+        setBestAskPrice(data.best_ask)
+        setBestAskQuantity(data.best_ask_size)
+        console.log('chrissshayy' + data.best_bid)
+      }
+    }
+  }, [pair])
+
+  const handleSelect = (e) => {
+    let unsubMsg = {
+      type: 'unsubscribe',
+      product_ids: [pair],
+      channels: ['ticker'],
+    }
+    let unsub = JSON.stringify(unsubMsg)
+
+    ws.current.send(unsub)
+
+    setpair(e.target.value)
+  }
 
   return (
-    <>
-      {/* <select name="currency" value={pair} onChange={handleSelect}>
-        {currencies.map((cur, idx) => {
-          return (
-            <option key={idx} value={cur.id}>
-              {cur.display_name}
-            </option>
-          )
-        })}
-      </select> */}
-      <ChakraUI />
-
-      <OB product_id="BTC-USD" />
-      {/* <Selecting />
-      <Routes>
-        <Route
-          path="/BTC-USD"
-          element={((<OB product_id="BTC-USD" />), (<ChakraUI />))}
-        />
-        <Route path="/home" element={<Selecting />} />
-      </Routes> */}
-    </>
+    <div className="container">
+      {
+        <select
+          style={{ marginLeft: '670px', border: '1px solid' }}
+          name="currency"
+          value={pair}
+          onChange={handleSelect}
+        >
+          {currencies.map((cur, idx) => {
+            return (
+              <option key={idx} value={cur.id}>
+                {cur.display_name}
+              </option>
+            )
+          })}
+        </select>
+      }
+      {/* <Dashboard price={price} data={pastData} /> */}
+      <Containers
+        best_bid_price={bestBidPrice}
+        best_bid_quantity={bestBidQuantity}
+        best_ask_price={bestAskPrice}
+        best_ask_quantity={bestAskQuantity}
+      />
+      <OB product_id={[pair]} />
+    </div>
   )
 }

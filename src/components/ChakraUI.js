@@ -1,6 +1,5 @@
-import { React, useState, useEffect } from 'react'
-// import { Table } from "react-bootstrap";
-
+import React, { useRef } from 'react'
+import { Line } from 'react-chartjs-2'
 import {
   TableContainer,
   Table,
@@ -11,63 +10,25 @@ import {
   Tbody,
 } from '@chakra-ui/react'
 
-const client = new WebSocket('wss://ws-feed.pro.coinbase.com')
-
-function Containers() {
-  const [bestBidPrice, setBestBidPrice] = useState('')
-  const [bestBidQuantity, setBestBidQuantity] = useState('')
-  const [bestAskQuantity, setBestAskQuantity] = useState('')
-  const [bestAskPrice, setBestAskPrice] = useState('')
-
-  useEffect(() => {
-    client.onopen = () => {
-      client.send(
-        JSON.stringify({
-          type: 'subscribe',
-          product_ids: ['BTC-USD'],
-          channels: ['ticker'],
-        })
-      )
-    }
-    client.onmessage = (message) => {
-      const data = JSON.parse(message.data)
-      if (data.type === 'ticker') {
-        // console.log('meshe lhallll')
-      }
-      if (data.product_id === 'BTC-USD') {
-        // console.log('kamena meshe lhal')
-        setBestBidPrice(data.best_bid)
-        // console.log('best bid priced' + data.best_bid)
-        setBestBidQuantity(data.best_bid_size)
-        // console.log('best bid zie' + data.best_bid_size)
-        setBestAskPrice(data.best_ask)
-        // console.log('best_ask' + data.best_ask)
-        setBestAskQuantity(data.best_ask_size)
-        // console.log('best ask quantity' + data.best_ask_size)
-        console.log(data.product_id)
-      }
-      if (data.profuct_id !== 'BTC-USD') {
-        // console.log('akalna khara')
-      }
-      // console.log("newest" + message.data.price);
-    }
-  }, [])
-
+function Containers({
+  best_bid_price,
+  best_bid_quantity,
+  best_ask_price,
+  best_ask_quantity,
+  da,
+}) {
+  if (best_bid_price === '0.00') {
+    return <h2>please select a currency pair</h2>
+  }
   return (
+    // <div className="dashboard">
+    //   <h2>{`$${price}`}</h2>
+
+    //   <div className="chart-container">
+    //     {/* <Line data={data} options={opts} /> */}
+    //   </div>
+
     <>
-      <select
-        placeholder="select"
-        name="select"
-        style={{
-          marginLeft: '670px',
-          border: ' 3px solid blue',
-          backgroundColor: 'blue',
-          color: 'white',
-        }}
-      >
-        <option value="option1">chris</option>
-        <option VALUE="OPTION 2"> STEPH</option>
-      </select>
       <TableContainer
         marginTop="20px"
         width="400px"
@@ -90,20 +51,30 @@ function Containers() {
             </Tr>
 
             <Tbody height="80px">
-              <Td
-                width="200px"
-                borderRight="1px solid grey"
-                fontSize="15px"
-                color="black"
-              >
-                <p style={{ fontWeight: 'bold' }}>{bestBidPrice}</p>
-                <p>Bid price</p>
-              </Td>
+              <Tr>
+                <Td
+                  width="200px"
+                  borderRight="1px solid grey"
+                  fontSize="15px"
+                  color="black"
+                >
+                  <p style={{ fontWeight: 'bold' }}> {`${best_bid_price}`}</p>
+                  <p>Bid price</p>
+                </Td>
 
-              <Td width="200px" fontSize="15px" textAlign="right" color="black">
-                <p style={{ fontWeight: 'bold' }}>{bestBidQuantity}</p>
-                <p>Bid quantity</p>
-              </Td>
+                <Td
+                  width="200px"
+                  fontSize="15px"
+                  textAlign="right"
+                  color="black"
+                >
+                  <p style={{ fontWeight: 'bold' }}>
+                    {' '}
+                    {`${best_bid_quantity}`}
+                  </p>
+                  <p>Bid quantity</p>
+                </Td>
+              </Tr>
             </Tbody>
           </Thead>
         </Table>
@@ -136,12 +107,12 @@ function Containers() {
                 fontSize="15px"
                 color="black"
               >
-                <p style={{ fontWeight: 'bold' }}>{bestAskPrice}</p>
+                <p style={{ fontWeight: 'bold' }}>{`${best_ask_price}`}</p>
                 <p>Bid price</p>
               </Td>
 
               <Td width="200px" fontSize="15px" textAlign="right" color="black">
-                <p style={{ fontWeight: 'bold' }}>{bestAskQuantity}</p>
+                <p style={{ fontWeight: 'bold' }}>{`${best_ask_quantity}`}</p>
                 <p>Bid quantity</p>
               </Td>
             </Tbody>
