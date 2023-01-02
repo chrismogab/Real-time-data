@@ -1,91 +1,35 @@
-import React from "react";
-import { Line } from "react-chartjs-2";
-import "chartjs-plugin-streaming";
+import Chart from 'chart.js/auto'
 
-import moment from "moment";
-
-const Chart = require("react-chartjs-2").Chart;
-
-const chartColors = {
-  red: "rgb(255, 99, 132)",
-  orange: "rgb(255, 159, 64)",
-  yellow: "rgb(255, 205, 86)",
-  green: "rgb(75, 192, 192)",
-  blue: "rgb(54, 162, 235)",
-  purple: "rgb(153, 102, 255)",
-  grey: "rgb(201, 203, 207)",
-};
-
-const color = Chart.helpers.color;
-const data = {
-  datasets: [
-    {
-      label: "Dataset 1 (linear interpolation)",
-      backgroundColor: color(chartColors.red).alpha(0.5).rgbString(),
-      borderColor: chartColors.red,
-      fill: false,
-      lineTension: 0,
-      borderDash: [8, 4],
-      data: [],
-    },
-  ],
-};
-
-const options = {
-  elements: {
-    line: {
-      tension: 0.5,
-    },
-  },
-  scales: {
-    xAxes: [
+export const formatData = (data) => {
+  let finalData = {
+    labels: [],
+    datasets: [
       {
-        type: "realtime",
-        distribution: "linear",
-        realtime: {
-          onRefresh: function (chart) {
-            chart.data.datasets[0].data.push({
-              x: moment(),
-              y: Math.random(),
-            });
-          },
-          delay: 3000,
-          time: {
-            displayFormat: "h:mm",
-          },
-        },
-        ticks: {
-          displayFormats: 1,
-          maxRotation: 0,
-          minRotation: 0,
-          stepSize: 1,
-          maxTicksLimit: 30,
-          minUnit: "second",
-          source: "auto",
-          autoSkip: true,
-          callback: function (value) {
-            return moment(value, "HH:mm:ss").format("mm:ss");
-          },
-        },
+        label: ' Price',
+        data: [],
+        backgroundColor: 'blue',
+        borderColor: 'blue',
+        fill: false,
       },
     ],
-    yAxes: [
-      {
-        ticks: {
-          beginAtZero: true,
-          max: 1,
-        },
-      },
-    ],
-  },
-};
+  }
+  let dates = data.map((val) => {
+    const ts = val[0]
+    let date = new Date(ts * 1000)
+    let day = date.getDate()
+    let month = date.getMonth() + 1
+    let year = date.getFullYear()
+    let final = `${month}-${day}-${year}`
+    return final
+  })
+  let priceArr = data.map((val) => {
+    return val[4]
+  })
+  priceArr.reverse()
+  dates.reverse()
+  finalData.labels = dates
+  finalData.datasets[0].data = priceArr
 
-function ChartJs() {
-  return (
-    <div className="App">
-      <Line data={data} options={options} />
-    </div>
-  );
+  console.log('final data', finalData)
+  return finalData
 }
-
-export default ChartJs;

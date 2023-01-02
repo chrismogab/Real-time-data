@@ -15,11 +15,10 @@ function Containers({
   best_bid_quantity,
   best_ask_price,
   best_ask_quantity,
-  da,
 }) {
-  if (best_bid_price === '0.00') {
-    return <h2>please select a currency pair</h2>
-  }
+  // if (best_bid_price === '0.00' && best_ask_price === '0.00') {
+  //   return <h2>please select a currency pair</h2>
+  // }
   return (
     // <div className="dashboard">
     //   <h2>{`$${price}`}</h2>
@@ -58,7 +57,9 @@ function Containers({
                   fontSize="15px"
                   color="black"
                 >
-                  <p style={{ fontWeight: 'bold' }}> {`${best_bid_price}`}</p>
+                  {/* <p style={{ fontWeight: 'bold' }}> {`${best_bid_price}`}</p> */}
+                  <p style={{ fontWeight: 'bold' }}>{best_bid_price}</p>
+
                   <p>Bid price</p>
                 </Td>
 

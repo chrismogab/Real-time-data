@@ -1,9 +1,11 @@
 import OB from './OB'
 import '../styles.css'
-import ChakraUI from './ChakraUI'
+import ChakraUI from './Containers'
 import React, { useState, useEffect, useRef } from 'react'
 import { Container } from '@chakra-ui/react'
-import Containers from './ChakraUI'
+import Containers from './Containers'
+import { formatData } from './Chart'
+import Dashboard from './Dashboard'
 
 export default function App() {
   const [currencies, setcurrencies] = useState([])
@@ -14,6 +16,9 @@ export default function App() {
   const [bestBidQuantity, setBestBidQuantity] = useState('')
   const [bestAskQuantity, setBestAskQuantity] = useState('')
   const [bestAskPrice, setBestAskPrice] = useState('')
+  const [selected, setSelected] = useState('')
+  const [pastData, setpastData] = useState({})
+
   const ws = useRef(null)
 
   let first = useRef(false)
@@ -29,6 +34,7 @@ export default function App() {
         .then((res) => res.json())
         .then((data) => (pairs = data))
       console.log('pairs', pairs)
+      // console.log('chrisyahmar' + pairs.id)
 
       let filtered = pairs.filter((pair) => {
         if (pair.id === 'BTC-USD') {
@@ -56,7 +62,8 @@ export default function App() {
       })
 
       setcurrencies(filtered)
-      console.log(filtered)
+      // console.log(filtered)
+      // console.log('chrisshay' + filtered.base_currency)
 
       first.current = true
     }
@@ -76,6 +83,31 @@ export default function App() {
     }
     let jsonMsg = JSON.stringify(msg)
     ws.current.send(jsonMsg)
+    let historicalDataURL = `${url}/products/${pair}/candles?granularity=86400`
+    const fetchHistoricalData = async () => {
+      let dataArr = []
+      await fetch(historicalDataURL)
+        .then((res) => res.json())
+        .then((data) => (dataArr = data))
+      // console.log('sexyboyy' + data)
+
+      let formattedData = formatData(dataArr)
+      setpastData(formattedData)
+    }
+    // let historicalDataURL = `${url}/products/${pair}/ticker`
+
+    // const fetchHistoricalData = async () => {
+    //   let dataArr = []
+    //   await fetch(historicalDataURL)
+    //     .then((res) => res.json())
+    //     .then((data) => (dataArr = data))
+    //   console.log('sexyboyy' + dataArr)
+
+    //   let formattedData = formatData(dataArr)
+    //   setpastData(formattedData)
+    // }
+
+    fetchHistoricalData()
 
     ws.current.onmessage = (e) => {
       let data = JSON.parse(e.data)
@@ -90,7 +122,9 @@ export default function App() {
         setBestBidQuantity(data.best_bid_size)
         setBestAskPrice(data.best_ask)
         setBestAskQuantity(data.best_ask_size)
-        console.log('chrissshayy' + data.best_bid)
+        // setSelected(data.product_id)
+
+        // console.log('chrissshayy' + data.product_id)
       }
     }
   }, [pair])
@@ -106,6 +140,7 @@ export default function App() {
     ws.current.send(unsub)
 
     setpair(e.target.value)
+    setSelected(e.target.value)
   }
 
   return (
@@ -126,6 +161,7 @@ export default function App() {
           })}
         </select>
       }
+
       {/* <Dashboard price={price} data={pastData} /> */}
       <Containers
         best_bid_price={bestBidPrice}
@@ -133,7 +169,11 @@ export default function App() {
         best_ask_price={bestAskPrice}
         best_ask_quantity={bestAskQuantity}
       />
-      <OB product_id={[pair]} />
+      <h2> chris :{selected}</h2>
+      {/* <h2> chris :{coin}</h2> */}
+      <Dashboard price={price} data={pastData} />
+
+      <OB product_id="BTC-USD" />
     </div>
   )
 }

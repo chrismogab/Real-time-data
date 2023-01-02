@@ -1,18 +1,19 @@
-import React from "react";
-import useCBFeed from "../hooks/useCBFeed";
-import OBP from "./OBP";
-import Table from "react-bootstrap/Table";
+import React from 'react'
+import useCBFeed from '../hooks/useCBFeed'
+import OBP from './OBP'
+import Table from 'react-bootstrap/Table'
 
 const OB = ({ product_id }) => {
-  const { asks, buys } = useCBFeed(product_id);
+  const { asks, buys } = useCBFeed(product_id)
   //   console.log("OB");
   //   console.log(asks);
   //   console.log(buys);
 
-  let spread = "...";
+  let spread = '...'
   if (asks[0] && buys[0]) {
-    spread = (Number(asks[0][0]) - Number(buys[0][0])).toFixed(2);
+    spread = (Number(asks[0][0]) - Number(buys[0][0])).toFixed(2)
   }
+  // console.log('nyeke' + asks[0])
 
   return (
     <>
@@ -30,13 +31,21 @@ const OB = ({ product_id }) => {
             <div>Price</div>
           </div>
         </div>
+        <div className="agg_div">
+          <span className="agg_text">Aggregation</span>
+          <span className="agg_nb">number</span>
+
+          <button className="change-agg">-</button>
+          <button className="change-agg">+</button>
+        </div>
       </div>
+
       <br />
       <br />
     </>
 
     //hon bdk thota
-  );
-};
+  )
+}
 
-export default OB;
+export default OB
