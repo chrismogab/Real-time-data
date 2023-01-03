@@ -10,7 +10,7 @@ const Ladder = ({ product_id }) => {
   if (asks[0] && buys[0]) {
     spread = (Number(asks[0][0]) - Number(buys[0][0])).toFixed(2)
   }
-  // console.log('nyeke' + asks[0])
+  // console.log( asks[0])
 
   return (
     <>
@@ -40,8 +40,6 @@ const Ladder = ({ product_id }) => {
       <br />
       <br />
     </>
-
-    //hon bdk thota
   )
 }
 

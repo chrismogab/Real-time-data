@@ -11,7 +11,6 @@ export default function App() {
   const [currencies, setcurrencies] = useState([])
   const [pair, setpair] = useState('')
   const [price, setprice] = useState('0.00')
-  // const [pastData, setpastData] = useState({})
   const [bestBidPrice, setBestBidPrice] = useState('')
   const [bestBidQuantity, setBestBidQuantity] = useState('')
   const [bestAskQuantity, setBestAskQuantity] = useState('')
@@ -65,7 +64,6 @@ export default function App() {
 
       setcurrencies(filtered)
       // console.log(filtered)
-      // console.log('chrisshay' + filtered.base_currency)
 
       first.current = true
     }
@@ -96,18 +94,6 @@ export default function App() {
       let formattedData = formatData(dataArr)
       setpastData(formattedData)
     }
-    // let historicalDataURL = `${url}/products/${pair}/ticker`
-
-    // const fetchHistoricalData = async () => {
-    //   let dataArr = []
-    //   await fetch(historicalDataURL)
-    //     .then((res) => res.json())
-    //     .then((data) => (dataArr = data))
-    //   console.log('sexyboyy' + dataArr)
-
-    //   let formattedData = formatData(dataArr)
-    //   setpastData(formattedData)
-    // }
 
     fetchHistoricalData()
 
@@ -125,8 +111,6 @@ export default function App() {
         setBestAskPrice(data.best_ask)
         setBestAskQuantity(data.best_ask_size)
         // setSelected(data.product_id)
-
-        // console.log('chrissshayy' + data.product_id)
       }
     }
   }, [pair])
@@ -165,7 +149,6 @@ export default function App() {
         </select>
       }
 
-      {/* <Dashboard price={price} data={pastData} /> */}
       <Containers
         best_bid_price={bestBidPrice}
         best_bid_quantity={bestBidQuantity}
@@ -176,7 +159,6 @@ export default function App() {
         {' '}
         {pair}
       </h2>
-      {/* <h2> chris :{coin}</h2> */}
       <Dashboard price={price} data={pastData} />
 
       <Ladder product_id="BTC-USD" />

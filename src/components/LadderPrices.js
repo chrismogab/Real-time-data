@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react'
 
-//https://api-public.sandbox.pro.coinbase.com
-//const client = new W3CWebSocket('wss://ws-feed-public.sandbox.pro.coinbase.com');
 const client = new WebSocket('wss://ws-feed.pro.coinbase.com')
 
 const LadderPrices = (product_id, depth = undefined) => {
@@ -23,10 +21,8 @@ const LadderPrices = (product_id, depth = undefined) => {
     }
 
     client.onmessage = (message) => {
-      //console.log(message);
-
       const data = JSON.parse(message.data)
-      // console.log("hayde hiye " + message.data);
+
       if (data.type === 'snapshot') {
         setOB((prevLadder) => {
           // console.log('2rata' + data.asks[0])
@@ -113,7 +109,6 @@ const LadderPrices = (product_id, depth = undefined) => {
     //zedla lwaet honeh
 
     return () => {
-      //console.log('unmounted');
       client.close()
     }
   }, [product_id, depth])

@@ -8,7 +8,6 @@ function Dashboard({ price, data }) {
       mode: 'index',
     },
     responsive: true,
-    // maintainAspectRatio: false,
   }
   if (price === '0.00') {
     return (

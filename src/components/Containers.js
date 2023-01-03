@@ -16,17 +16,7 @@ function Containers({
   best_ask_price,
   best_ask_quantity,
 }) {
-  // if (best_bid_price === '0.00' && best_ask_price === '0.00') {
-  //   return <h2>please select a currency pair</h2>
-  // }
   return (
-    // <div className="dashboard">
-    //   <h2>{`$${price}`}</h2>
-
-    //   <div className="chart-container">
-    //     {/* <Line data={data} options={opts} /> */}
-    //   </div>
-
     <>
       <TableContainer
         marginTop="20px"
@@ -57,7 +47,6 @@ function Containers({
                   fontSize="15px"
                   color="black"
                 >
-                  {/* <p style={{ fontWeight: 'bold' }}> {`${best_bid_price}`}</p> */}
                   <p style={{ fontWeight: 'bold' }}>{best_bid_price}</p>
 
                   <p>Bid price</p>
