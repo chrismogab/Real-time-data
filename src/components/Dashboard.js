@@ -11,11 +11,24 @@ function Dashboard({ price, data }) {
     // maintainAspectRatio: false,
   }
   if (price === '0.00') {
-    return <h2>please select a currency pair</h2>
+    return (
+      <h2
+        style={{
+          position: 'absolute',
+          marginTop: '-190px',
+          marginLeft: '530px',
+          fontSize: '30px',
+        }}
+      >
+        Please select a currency pair
+      </h2>
+    )
   }
   return (
     <div className="dashboard">
-      <h2>{`$${price}`}</h2>
+      <h2
+        style={{ position: 'relative', marginLeft: '100px', color: 'blue' }}
+      >{`$${price}`}</h2>
 
       <div className="chart-container">
         <Line data={data} options={opts} />

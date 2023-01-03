@@ -1,4 +1,4 @@
-import OB from './OB'
+import Ladder from './Ladder'
 import '../styles.css'
 import ChakraUI from './Containers'
 import React, { useState, useEffect, useRef } from 'react'
@@ -18,6 +18,7 @@ export default function App() {
   const [bestAskPrice, setBestAskPrice] = useState('')
   const [selected, setSelected] = useState('')
   const [pastData, setpastData] = useState({})
+  const [idTry, setIdTry] = useState('')
 
   const ws = useRef(null)
 
@@ -49,6 +50,7 @@ export default function App() {
         if (pair.id === 'LTC-USD') {
           return pair
         }
+        setIdTry(pair.id)
       })
 
       filtered = filtered.sort((a, b) => {
@@ -142,12 +144,13 @@ export default function App() {
     setpair(e.target.value)
     setSelected(e.target.value)
   }
+  let chrissy = selected.toString
 
   return (
     <div className="container">
       {
         <select
-          style={{ marginLeft: '670px', border: '1px solid' }}
+          style={{ marginLeft: '660px', border: '1px solid' }}
           name="currency"
           value={pair}
           onChange={handleSelect}
@@ -169,11 +172,14 @@ export default function App() {
         best_ask_price={bestAskPrice}
         best_ask_quantity={bestAskQuantity}
       />
-      <h2> chris :{selected}</h2>
+      <h2 style={{ position: 'relative', marginLeft: '100px', color: 'blue' }}>
+        {' '}
+        {pair}
+      </h2>
       {/* <h2> chris :{coin}</h2> */}
       <Dashboard price={price} data={pastData} />
 
-      <OB product_id="BTC-USD" />
+      <Ladder product_id="BTC-USD" />
     </div>
   )
 }

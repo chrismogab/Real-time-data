@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 //const client = new W3CWebSocket('wss://ws-feed-public.sandbox.pro.coinbase.com');
 const client = new WebSocket('wss://ws-feed.pro.coinbase.com')
 
-const useCBFeed = (product_id, depth = undefined) => {
+const LadderPrices = (product_id, depth = undefined) => {
   const [ob, setOB] = useState({
     product_id: product_id,
     buys: [],
@@ -28,7 +28,7 @@ const useCBFeed = (product_id, depth = undefined) => {
       const data = JSON.parse(message.data)
       // console.log("hayde hiye " + message.data);
       if (data.type === 'snapshot') {
-        setOB((prevOB) => {
+        setOB((prevLadder) => {
           // console.log('2rata' + data.asks[0])
 
           data.asks.sort((a, b) =>
@@ -46,10 +46,10 @@ const useCBFeed = (product_id, depth = undefined) => {
               : 0
           )
           //console.log('setting from snapshot');
-          // console.log({ ...prevOB, asks: data.asks, buys: data.bids })
+          // console.log({ ...prevLadder, asks: data.asks, buys: data.bids })
           // console.log(product_id)
           return {
-            ...prevOB,
+            ...prevLadder,
             asks: data.asks.slice(0, depth),
             buys: data.bids.slice(0, depth),
           }
@@ -69,11 +69,11 @@ const useCBFeed = (product_id, depth = undefined) => {
         const addedBuys = addedItems
           .filter((el) => el[0] === 'buy')
           .map((el) => el.slice(1))
-        setOB((prevOB) => {
-          const asks = [...prevOB.asks]
+        setOB((prevLadder) => {
+          const asks = [...prevLadder.asks]
             .filter((ask) => !removedAsks.includes(ask[0]))
             .concat(addedAsks)
-          const buys = [...prevOB.buys]
+          const buys = [...prevLadder.buys]
             .filter((buy) => !removedBuys.includes(buy[0]))
             .concat(addedBuys)
           asks.sort((a, b) =>
@@ -91,16 +91,18 @@ const useCBFeed = (product_id, depth = undefined) => {
               : 0
           )
           //console.log("setting from update");
-          //console.log(prevOB);
-          //console.log({...prevOB, asks: asks, buys: buys });
+          //console.log(prevLadder);
+          //console.log({...prevLadder, asks: asks, buys: buys });
           return {
-            ...prevOB,
+            ...prevLadder,
             asks: asks.slice(0, depth),
             buys: buys.slice(0, depth),
           }
         })
       } else if (data.type === 'subscriptions') {
       } else {
+        console.log(data.type, 'nyekee')
+
         throw new Error()
       }
     }
@@ -119,4 +121,4 @@ const useCBFeed = (product_id, depth = undefined) => {
   return ob
 }
 
-export default useCBFeed
+export default LadderPrices
